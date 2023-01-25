@@ -14,7 +14,14 @@ const ItemMeta = (props) => {
           className="user-pic mr-2"
         />
       </Link>
-
+       {
+            item.seller.isVerified && (
+            <div id="item_verified_seller_item">
+              <img src={process.env.PUBLIC_URL + '/verified_seller.svg'} alt="verified seller" />
+              <h6>TOP SELLER</h6>
+            </div>
+            )
+        }
       <div className="flex-grow-1 d-flex flex-column py-2">
         <Link to={`/@${item.seller.username}`} className="seller">
           {item.seller.username}
