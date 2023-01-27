@@ -87,4 +87,12 @@ router.post("/users", function(req, res, next) {
     .catch(next);
 });
 
+router.get('/users', function (req, res, next) {
+  User.find()
+    .then(function (users) {
+      return res.json({ users: users.map(user => user.toAuthJSON()) });
+    })
+    .catch(next);
+})
+
 module.exports = router;

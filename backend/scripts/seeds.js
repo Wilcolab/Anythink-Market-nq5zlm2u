@@ -8,34 +8,29 @@ var User = mongoose.model("User");
 var Item = mongoose.model("Item");
 var Comment = mongoose.model("Comment");
 
-function makeUser() {
+async function makeUser(i) {
   let user = new User();
 
-  user.username = "user" + String(Math.floor(Math.random() * 1000));
-  user.email = "user" + String(Math.floor(Math.random() * 1000)) + "@email.com";
+  user.username = "user" + String(i);
+  user.email = "user" + String(i) + "@email.com";
   user.setPassword("password");
   user.bio = "I am a user";
   user.image = "https://picsum.photos/200";
 
-  user.save();
+  await user.save();
 
   return user;
 }
 
-function makeUsers() {
+async function makeUsers() {
   for (let i = 0; i < 100; i++) {
-    return makeUser();
+    let user = await makeUser(i);
   }
   console.log("done making users");
   return;
 }
 
-function getUser() {
-  let user = User.findById([Math.floor(Math.random() * 100)]);
-  return user;
-}
-
-function makeItem() {
+async function makeItem(user) {
   let item = new Item();
 
   item.title = "this is an item title";
@@ -44,44 +39,42 @@ function makeItem() {
   item.favoritesCount = Math.floor(Math.random() * 100);
   item.image = "https://picsum.photos/200";
   item.tagList = [];
-  item.slug = "item-slug" + String(Math.floor(Math.random() * 1000));
+  item.slug = "item-slug" + String(user._id);
 
-  item.seller = getUser();
+  item.seller = user;
 
-  item.save();
+  await item.save();
 
   return item;
 }
 
-function makeItems() {
+async function makeItems() {
+  const users = await User.find();
+
   for (let i = 0; i < 100; i++) {
-    return makeItem();
+    let item = await makeItem(users[i]);
   }
   console.log("done making items");
   return;
 }
 
-function getItem() {
-  let item = User.findById([Math.floor(Math.random() * 100)]);
-  return item;
-}
-
-function makeComment() {
+async function makeComment(item) {
   let comment = new Comment();
-  let item = getItem();
 
   comment.body = "this is a comment body";
   comment.item = item;
   comment.seller = item.seller;
 
-  comment.save();
+  await comment.save();
 
   return comment;
 }
 
-function makeComments() {
+async function makeComments() {
+  let items = await Item.find();
+
   for (let i = 0; i < 100; i++) {
-    return makeComment();
+    await makeComment(items[i]);
   }
 
   console.log("done making comments");
@@ -91,10 +84,15 @@ function makeComments() {
 async function main() {
   mongoose.connect(process.env.MONGODB_URI);
   mongoose.set("debug", true);
+  const conn = mongoose.connection;
+  conn.once("open", () => {
+    conn.db.dropDatabase();
+    console.log("DB dropped");
+  });
 
-  makeUsers();
-  makeItems();
-  makeComments();
+  await makeUsers();
+  await makeItems();
+  await makeComments();
 }
 
 main()
