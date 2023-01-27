@@ -24,7 +24,7 @@ function makeUser() {
 
 function makeUsers() {
   for (let i = 0; i < 100; i++) {
-    makeUser();
+    return makeUser();
   }
   console.log("done making users");
   return;
@@ -55,7 +55,7 @@ function makeItem() {
 
 function makeItems() {
   for (let i = 0; i < 100; i++) {
-    makeItem();
+    return makeItem();
   }
   console.log("done making items");
   return;
@@ -81,7 +81,7 @@ function makeComment() {
 
 function makeComments() {
   for (let i = 0; i < 100; i++) {
-    makeComment();
+    return makeComment();
   }
 
   console.log("done making comments");
