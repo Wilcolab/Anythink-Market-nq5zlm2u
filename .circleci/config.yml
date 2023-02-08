@@ -8,10 +8,12 @@ jobs:
       - checkout
       - run:
           name: Install deps
-          command: cd frontend && yarn install
+          working_directory: ./frontend
+          command: yarn install
       - run:
           name: Run tests
-          command: cd frontend && yarn test
+          working_directory: ./frontend
+          command: yarn test
 
 workflows:
   build-and-test:
